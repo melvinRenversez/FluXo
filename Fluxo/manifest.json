@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Fluxo",
+  "version": "1.0",
+  "permissions": ["webRequest", "storage", "webNavigation"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "main.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

@@ -1,0 +1,65 @@
+yt-dlp -N 16 -o "video.mp4" "https://moov265724.moovtop.fr/files/aa/mEIW868rdqnDvV5ibBi9ILCF5FQXC3rZHaV.m3u8"
+
+
+
+
+[
+  [
+    {
+      id: 8,
+      url: 'https://moov265724.moovtop.fr/files/aa/mEIW868rdqnDvV5ibBi9ILCF5FQXC3rZHaV.m3u8',
+      title: 'Pokmiv - Кraken (2026)',
+      duration: 7736.16,
+      status_id: 1,
+      created_at: 2026-05-26T11:05:49.000Z
+    },
+    {
+      id: 12,
+      url: 'https://moo265724.moovbob.fr/files/aa/5TmZHWr22eyKoI4DvO8VhSbEThqhfhekbBkk.m3u8',
+      title: 'Pokmiv - Super Mario Galaxy, le film (2026)',
+      duration: 5384.68,
+      status_id: 1,
+      created_at: 2026-05-26T11:40:43.000Z
+    },
+    {
+      id: 13,
+      url: 'https://bram265724.bramtiv.com/files/aa/hM0E4KieOaz84IByZIHZjPS72dg3HyBU46H.m3u8',
+      title: "Pokmiv - Une enfance allemande - Île d'Amrum, 1945 (2025)",
+      duration: 8117.36,
+      status_id: 1,
+      created_at: 2026-05-26T11:40:44.000Z
+    },
+    {
+      id: 14,
+      url: 'https://moo265724.moovbob.fr/files/aa/mEqbjercy1dWIYaal1xidwvikzldfeWMTmz.m3u8',
+      title: 'Pokmiv - Super Mario Bros. le film (2023)',
+      duration: 6773.68,
+      status_id: 1,
+      created_at: 2026-05-26T11:40:45.000Z
+    },
+    {
+      id: 15,
+      url: 'https://moo265724.moovbob.fr/files/aa/6twqV7grC1hlmS3mCCBQD5vF1H91nRq9mBb.m3u8',
+      title: 'Pokmiv - Super Mario Galaxy, le film (2026)',
+      duration: 5392,
+      status_id: 1,
+      created_at: 2026-05-26T11:40:46.000Z
+    },
+    {
+      id: 16,
+      url: 'https://moov265724.moovtop.fr/files/aa/E7DKB2XXFezDm8BYSqTdJNzu95wbe6QTduD.m3u8',
+      title: 'Pokmiv - Ladies First (2026)',
+      duration: 5903.44,
+      status_id: 1,
+      created_at: 2026-05-26T11:40:48.000Z
+    }
+  ],
+  [
+    `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `url` VARCHAR(255) NOT NULL UNIQUE_KEY,
+    `title` VARCHAR(255) NOT NULL,
+    `duration` FLOAT NOT NULL,
+    `status_id` INT NOT NULL,
+    `created_at` TIMESTAMP(19)
+  ]
+]

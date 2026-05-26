@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<style>
+	body {
+		font-family: Arial, sans-serif;
+
+		background: #202020;
+		color: #eee;
+
+		margin: 0;
+		padding: 20px;
+	}
+
+	/* TABLE */
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+
+		background: #151515;
+
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	/* HEADER */
+
+	thead {
+		background: #2a2a2a;
+	}
+
+	thead th {
+		padding: 15px;
+
+		text-align: left;
+
+		color: #eee;
+
+		font-size: 14px;
+		font-weight: bold;
+
+		border-bottom: 1px solid #303030;
+	}
+
+	/* ROWS */
+
+	tbody tr {
+		border-bottom: 1px solid #252525;
+
+		transition: background 0.2s ease;
+	}
+
+	tbody tr:hover {
+		background: #1f1f1f;
+	}
+
+	tbody td {
+		padding: 15px;
+
+		color: #ddd;
+
+		font-size: 14px;
+
+		max-width: 250px;
+
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* URL */
+
+	tbody td:nth-child(2) {
+		color: #aaa;
+	}
+
+	/* DURATION */
+
+	tbody td:nth-child(3) {
+		width: 100px;
+	}
+
+	tbody td:nth-child(3) span {
+		background: #303030;
+
+		padding: 6px 12px;
+
+		border-radius: 20px;
+
+		display: inline-block;
+
+		font-size: 13px;
+	}
+
+	/* STATUS */
+
+	tbody td:nth-child(4) {
+		font-weight: bold;
+	}
+
+	.title {
+		font-weight: bold;
+	}
+
+	/* SCROLL */
+
+	::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: #151515;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: #3a3a3a;
+		border-radius: 10px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: #4a4a4a;
+	}
+</style>
+
+<body>
+	<table>
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>URL</th>
+				<th>Duration</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody id="list">
+		</tbody>
+	</table>
+</body>
+<script>
+
+	let nbRows = 0;
+	let asFinish = false;
+	let currentDownloadId = null;
+
+	function getLinks() {
+		fetch("/getLinks")
+			.then(response => response.json())
+			.then(data => {
+				console.log(data);
+
+				if (data.length === nbRows && asFinish == false) {
+					console.log("No change in links, skipping update.");
+					return;
+				}
+
+				const list = document.getElementById("list");
+
+				let temp = "";
+
+				nbRows = data.length;
+
+				data.forEach(element => {
+					let template = `
+						<tr>
+							<td class="title">${element.title}</td>
+							<td title="${element.url}">${element.url}</td>
+							<td><span>${formatDuration(element.duration)}</span></td>
+							<td id="${element.id}">${element.status}</td>
+						</tr>
+					`;
+
+					temp += template;
+				});
+
+				list.innerHTML = temp;
+
+			})
+			.catch(error => {
+				console.error("Error fetching links:", error);
+			});
+	}
+
+	function getCurrentDownload() {
+		fetch("/getCurrentDownload")
+			.then(response => response.json())
+			.then(data => {
+				console.log("Current Download:", data);
+
+				if (data.progress == null) return;
+
+				if (currentDownloadId !== data.id) {
+					currentDownloadId = data.id;
+					asFinish = false;
+				}
+
+				const currentRow = document.getElementById(data.id);
+
+				if (data.progress == 100) {
+					asFinish = true;
+				}
+
+				if (currentRow) {
+					currentRow.innerHTML = data.progress + "%";
+				}
+
+			})
+			.catch(error => {
+				console.error("Error fetching current download:", error);
+			});
+	}
+
+	getLinks();
+	setInterval(getLinks, 5000);
+	getCurrentDownload();
+	setInterval(getCurrentDownload, 2000);
+
+
+	function formatDuration(seconds) {
+
+		seconds = Math.floor(seconds);
+
+		const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+		const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+		const s = (seconds % 60).toString().padStart(2, '0');
+		return `${h}:${m}:${s}`;
+	}
+
+
+</script>
+
+</html>
