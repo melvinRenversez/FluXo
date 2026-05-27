@@ -7,14 +7,22 @@ create table links(
 	title varchar(255) not null,
 	duration float not null,
 	status_id int not null default 1,
+
+	startDownload_at timestamp,
+	endDownload_at timestamp,
+
 	created_at timestamp default current_timestamp,
 
 	foreign key (status_id) references status(id)
 );
 
+alter table links add column startDownload_at timestamp;
+alter table links add column endDownload_at timestamp;
+
+
 delete from links where id between 0 and 10000;
 
-update links set status_id = 1 where id between 0 and  100000;
+update links set status_id = 1, startDownload_at = null, endDownload_at = null where id between 0 and  100000;
 
 select l.id, url, title, duration, libelle
 from links l

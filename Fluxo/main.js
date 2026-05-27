@@ -3,15 +3,23 @@ let tab = {};
 
 chrome.webRequest.onBeforeRequest.addListener(
 	async function (details) {
+
+		console.log("details ");
+
 		const url = details.url;
 
 		if (!url.includes(".m3u8")) return;
 
+		console.log("pre some :" + FluxoLinks.some(link => link.url === url));
+		// console.log("tab title : ", tab.title);
+
 		if (FluxoLinks.some(link => link.url === url) && !tab.title) return;
+		console.log("some");
 
 		const duration = await getM3U8Duration(url);
 
 		if (duration === 0) return;
+		console.log("duration ");
 
 		let newPush = {
 			url,
@@ -48,7 +56,9 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 		chrome.storage.local.set({ FluxoLinks: unique });
 
-		console.log("Unique : ", unique);
+		// console.log("Unique : ", unique);
+
+		tab = {};
 
 	},
 	{
@@ -58,18 +68,22 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 
 async function getM3U8Duration(url) {
-	const res = await fetch(url);
-	const text = await res.text();
+	try {
+		const res = await fetch(url);
+		const text = await res.text();
 
-	let duration = 0;
+		let duration = 0;
 
-	text.split("\n").forEach(line => {
-		if (line.startsWith("#EXTINF:")) {
-			duration += parseFloat(line.replace("#EXTINF:", ""));
-		}
-	});
+		text.split("\n").forEach(line => {
+			if (line.startsWith("#EXTINF:")) {
+				duration += parseFloat(line.replace("#EXTINF:", ""));
+			}
+		});
 
-	return duration;
+		return duration;
+	} catch (error) {
+
+	}
 }
 
 

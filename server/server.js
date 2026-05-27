@@ -20,10 +20,17 @@ app.get("/", async (req, res) => {
 	res.sendFile("index.html");
 });
 
+app.get("/getDownloadStatus", async (req, res) => {
+	res.json({ canDownload: canDownload });
+});
+
+app.post("/setDownloadStatus", async (req, res) => {
+	canDownload = req.body.status;
+});
 
 app.get("/getLinks", async (req, res) => {
 
-	const links = await db.pool.query("select l.id, url, title, duration, libelle as status from links l join status s on l.status_id = s.id");
+	const links = await db.pool.query("select l.id, url, title, duration, libelle as status, startDownload_at, endDownload_at from links l join status s on l.status_id = s.id");
 
 	res.json(links[0]);
 });
@@ -61,8 +68,8 @@ app.post("/save", async (req, res) => {
 	console.log("URL new :", allUrls[0].map(link => link.url));
 
 	if (allUrls[0].map(link => link.url).includes(url)) {
-		res.status(400).json({ statut: "error", message: "Ce lien existe déjà" });
 		console.log("Ce lien existe déjà");
+		res.status(400).json({ statut: "error", message: "Ce lien existe déjà" });
 		return;
 	}
 
@@ -120,8 +127,7 @@ async function download() {
 			currentDownload.progress = parseFloat(match[1]);
 		}
 
-		db.pool.query("update links set status_id = 2 where id = ?", [currentDownload.id]);
-
+		db.pool.query("update links set status_id = 2, startDownload_at = now() where id = ?", [currentDownload.id]);
 
 		console.log(currentDownload);
 
@@ -139,9 +145,9 @@ async function download() {
 	ytdlp.on("close", (code) => {
 
 		if (currentDownload.progress !== 100) {
-			db.pool.query("update links set status_id = 4 where id = ?", [currentDownload.id]);
+			db.pool.query("update links set status_id = 4, endDownload_at = now() where id = ?", [currentDownload.id]);
 		} else {
-			db.pool.query("update links set status_id = 3 where id = ?", [currentDownload.id]);
+			db.pool.query("update links set status_id = 3, endDownload_at = now() where id = ?", [currentDownload.id]);
 		}
 
 		currentDownload.progress = null;

@@ -2,144 +2,185 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <style>
-	body {
-		font-family: Arial, sans-serif;
+  body {
+    font-family: Arial, sans-serif;
 
-		background: #202020;
-		color: #eee;
+    background: #202020;
+    color: #eee;
 
-		width: 400px;
-		height: 600px;
+    width: 400px;
+    height: 600px;
 
-	}
+  }
 
-	.list {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
-		padding: 10px;
+    padding: 10px;
 
-		background: #151515;
-	}
+    padding-bottom: 70px;
 
-	.element {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
+  }
 
-		padding: 10px;
+  .element {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    background: #151515;
+
+  }
+
+  .title {
+    font-weight: bold;
+
+    color: #eee;
+  }
+
+  .url {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    color: #eee;
+  }
+
+  .duration {
+
+    background: #303030;
+
+    color: #eee;
+
+    display: flex;
+    justify-content: center;
+
+    width: min-content;
+    padding: 10px 20px;
+
+    border-radius: 30px;
+  }
+
+  .bottom {
+    display: flex;
+    gap: 10px;
+
+    justify-content: space-between;
+  }
+
+  .bottom button {
+    background: #303030;
+    color: #eee;
+
+    padding: 5px 10px;
+
+    border-radius: 5px;
+
+    border: none;
+    cursor: pointer;
+  }
+
+  .save-btn:disabled {
+    background: #505050;
+    color: #aaa;
+
+    cursor: not-allowed;
+  }
+
+  #resetButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+
+    background: #303030;
+    color: #eee;
+
+    padding: 10px 20px;
+
+    border-radius: 5px;
+
+    border: none;
+    cursor: pointer;
+  }
+
+  .message {
+    font-size: 10px;
+
+    text-align: end;
+
+    height: 0px;
+
+  }
+
+  .message.actif {
+    height: auto;
+  }
+
+  .message span.error {
+    color: red;
+    font-weight: bold;
+  }
+
+  .message span.success {
+    color: limegreen;
+    font-weight: bold;
+  }
+
+  .bottomForm {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    margin-top: 10px;
+  }
 
 
-	}
-
-	.title {
-		font-weight: bold;
-
-		color: #eee;
-	}
-
-	.url {
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-
-		color: #eee;
-	}
-
-	.duration {
-		margin-top: 30px;
-
-		background: #303030;
-
-		color: #eee;
-
-		display: flex;
-		justify-content: center;
-
-		width: min-content;
-		padding: 10px 20px;
-
-		border-radius: 30px;
-	}
-
-	.bottom {
-		display: flex;
-		gap: 10px;
-
-		margin-top: 20px;
-
-		width: 100%;
-		justify-content: space-between;
-	}
-
-	.bottom .custom-select input {
-		background: #303030;
-		color: #eee;
-
-		border: none;
-		outline: none;
-
-		border-bottom: 1px solid #eee;
-
-		padding: 5px 10px;
-
-		max-width: 250px;
-		width: 250px;
-
-	}
-
-	.bottom button {
-		background: #303030;
-		color: #eee;
-
-		padding: 5px 10px;
-
-		border-radius: 5px;
-
-		border: none;
-		cursor: pointer;
-	}
-
-	.save-btn:disabled {
-		background: #505050;
-		color: #aaa;
-
-		cursor: not-allowed;
-	}
-
-	#resetButton {
-		position: absolute;
-		bottom: 20px;
-		right: 20px;
-
-		background: #303030;
-		color: #eee;
-
-		padding: 10px 20px;
-
-		border-radius: 5px;
-
-		border: none;
-		cursor: pointer;
-	}
 </style>
 
 <body>
 
-	<div class="list" id="list">
+  
 
-	</div>
-
-
-	<button id="resetButton"> reset </button>
+  <div class="list" id="list">
 
 
-	<script src="popup.js" defer></script>
+    <div class="element">
+      <div class="title">eeeee</div>
+      <div class="url" title="https://moo265724.moovbob.fr/files/aa/mEqbjercy1dWIYaal1xidwvikzldfeWMTmz.m3u8">https://moo265724.moovbob.fr/files/aa/mEqbjercy1dWIYaal1xidwvikzldfeWMTmz.m3u8</div>
+      <div class="duration">01:52:53</div>
+
+      <form class="bottom">
+        <div class="custom-select">
+          <input name="title" class="title-input" value="Witchboard (2025)" placeholder="Titre ">
+
+        </div>
+
+        <input type="hidden" name="url" value="https://moo265724.moovbob.fr/files/aa/mEqbjercy1dWIYaal1xidwvikzldfeWMTmz.m3u8">
+        <input type="hidden" name="duration" value="6773.683995000001">
+
+        <button class="save-btn" type="submit" }="">Envoyer</button>
+      </form>
+
+
+
+    </div>
+
+
+  </div>
+
+
+  <button id="resetButton"> reset </button>
+
+  <script src="popup.js" defer></script>
 </body>
 
 </html>

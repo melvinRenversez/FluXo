@@ -2,237 +2,373 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
 </head>
 <style>
-	body {
-		font-family: Arial, sans-serif;
+  body {
+    font-family: Arial, sans-serif;
 
-		background: #202020;
-		color: #eee;
+    background: #202020;
+    color: #eee;
 
-		margin: 0;
-		padding: 20px;
-	}
+    margin: 0;
+    padding: 20px;
 
-	/* TABLE */
+    cursor: url(./cursor.cur) 0 0, auto;
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
+	height: 100dvh;
+  }
 
-		background: #151515;
+  /* TABLE */
 
-		border-radius: 12px;
-		overflow: hidden;
-	}
+  table {
+    width: 100%;
+    border-collapse: collapse;
 
-	/* HEADER */
+    background: #151515;
 
-	thead {
-		background: #2a2a2a;
-	}
+    border-radius: 12px;
+    overflow: hidden;
+  }
 
-	thead th {
-		padding: 15px;
+  /* HEADER */
 
-		text-align: left;
+  thead {
+    background: #2a2a2a;
+  }
 
-		color: #eee;
+  thead th {
+    padding: 15px;
 
-		font-size: 14px;
-		font-weight: bold;
+    text-align: left;
 
-		border-bottom: 1px solid #303030;
-	}
+    color: #eee;
 
-	/* ROWS */
+    font-size: 14px;
+    font-weight: bold;
 
-	tbody tr {
-		border-bottom: 1px solid #252525;
+    border-bottom: 1px solid #303030;
+  }
 
-		transition: background 0.2s ease;
-	}
+  /* ROWS */
 
-	tbody tr:hover {
-		background: #1f1f1f;
-	}
+  tbody tr {
+    border-bottom: 1px solid #252525;
 
-	tbody td {
-		padding: 15px;
+    transition: background 0.2s ease;
+  }
 
-		color: #ddd;
+  tbody tr:hover {
+    background: #1f1f1f;
+  }
 
-		font-size: 14px;
+  tbody td {
+    padding: 15px;
 
-		max-width: 250px;
+    color: #ddd;
 
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
+    font-size: 14px;
 
-	/* URL */
+    max-width: 250px;
 
-	tbody td:nth-child(2) {
-		color: #aaa;
-	}
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-	/* DURATION */
+  /* URL */
 
-	tbody td:nth-child(3) {
-		width: 100px;
-	}
+  tbody td:nth-child(2) {
+    color: #aaa;
+  }
 
-	tbody td:nth-child(3) span {
-		background: #303030;
+  /* DURATION */
 
-		padding: 6px 12px;
+  tbody td:nth-child(3) {
+    width: 100px;
+  }
 
-		border-radius: 20px;
+  tbody td:nth-child(3) span {
+    background: #303030;
 
-		display: inline-block;
+    padding: 6px 12px;
 
-		font-size: 13px;
-	}
+    border-radius: 20px;
 
-	/* STATUS */
+    display: inline-block;
 
-	tbody td:nth-child(4) {
-		font-weight: bold;
-	}
+    font-size: 13px;
+  }
 
-	.title {
-		font-weight: bold;
-	}
+  /* STATUS */
 
-	/* SCROLL */
+  tbody td:nth-child(4) {
+    font-weight: bold;
+  }
 
-	::-webkit-scrollbar {
-		width: 8px;
-		height: 8px;
-	}
+  .title {
+    font-weight: bold;
+  }
 
-	::-webkit-scrollbar-track {
-		background: #151515;
-	}
+  /* SCROLL */
 
-	::-webkit-scrollbar-thumb {
-		background: #3a3a3a;
-		border-radius: 10px;
-	}
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 
-	::-webkit-scrollbar-thumb:hover {
-		background: #4a4a4a;
-	}
+  ::-webkit-scrollbar-track {
+    background: #151515;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a4a4a;
+  }
+
+
+
+  .switchContainer {
+    width: 100%;
+
+    display: flex;
+    justify-content: end;
+
+    margin-bottom: 20px;
+  }
+
+  .switch {
+    height: 30px;
+    width: 60px;
+    background-color: #303030;
+    border-radius: 30px;
+    position: relative;
+    cursor: pointer;
+
+
+    margin-right: 10px;
+  }
+
+  .switch .ball {
+    height: 20px;
+    width: 20px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+
+  .switch.active .ball {
+    transform: translateX(30px);
+  }
+
+  .ball.active {
+    background-color: limegreen;
+  }
 </style>
 
+
+<div class="switchContainer">
+  <div class="switch" id="switch">
+    <div class="ball"></div>
+  </div>
+</div>
+
+
+
 <body>
-	<table>
-		<thead>
-			<tr>
-				<th>Title</th>
-				<th>URL</th>
-				<th>Duration</th>
-				<th>Status</th>
-			</tr>
-		</thead>
-		<tbody id="list">
-		</tbody>
-	</table>
+  <table>
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>Title</th>
+        <th>URL</th>
+        <th>Duration</th>
+        <th>Status</th>
+        <th>Download</th>
+      </tr>
+    </thead>
+    <tbody id="list">
+    </tbody>
+  </table>
 </body>
 <script>
+  let nbRows = 0;
+  let asFinish = false;
+  let currentDownloadId = null;
 
-	let nbRows = 0;
-	let asFinish = false;
-	let currentDownloadId = null;
+  function getLinks() {
+    fetch("/getLinks")
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
 
-	function getLinks() {
-		fetch("/getLinks")
-			.then(response => response.json())
-			.then(data => {
-				console.log(data);
+        if (data.length === nbRows && asFinish == false) {
+          return;
+        }
 
-				if (data.length === nbRows && asFinish == false) {
-					console.log("No change in links, skipping update.");
-					return;
-				}
+        const list = document.getElementById("list");
 
-				const list = document.getElementById("list");
+        let temp = "";
 
-				let temp = "";
+        nbRows = data.length;
 
-				nbRows = data.length;
 
-				data.forEach(element => {
-					let template = `
-						<tr>
+        data.forEach(element => {
+          console.log(element);
+
+          const start = new Date(element.startDownload_at);
+          const end = new Date(element.endDownload_at);
+
+
+          const lastRow = (element.status == "Completed") ? `Donloaded on ${formatDuration((end - start)/1000)} ` : "Waitting...";
+
+
+          let template = `
+						<tr id="row">
+							<td>${element.id}</td>
 							<td class="title">${element.title}</td>
 							<td title="${element.url}">${element.url}</td>
 							<td><span>${formatDuration(element.duration)}</span></td>
-							<td id="${element.id}">${element.status}</td>
+							<td>${element.status}</td>
+							<td id="${element.id}">${lastRow}</td>
 						</tr>
 					`;
 
-					temp += template;
-				});
+          temp += template;
+        });
 
-				list.innerHTML = temp;
+        list.innerHTML = temp;
 
-			})
-			.catch(error => {
-				console.error("Error fetching links:", error);
-			});
-	}
+      })
+      .catch(error => {
+        console.error("Error fetching links:", error);
+      });
+  }
 
-	function getCurrentDownload() {
-		fetch("/getCurrentDownload")
-			.then(response => response.json())
-			.then(data => {
-				console.log("Current Download:", data);
+  function getCurrentDownload() {
+    fetch("/getCurrentDownload")
+      .then(response => response.json())
+      .then(data => {
 
-				if (data.progress == null) return;
+        if (data.progress == null) return;
 
-				if (currentDownloadId !== data.id) {
-					currentDownloadId = data.id;
-					asFinish = false;
-				}
+        if (currentDownloadId !== data.id) {
+          currentDownloadId = data.id;
+          asFinish = false;
+        }
 
-				const currentRow = document.getElementById(data.id);
+        const currentRow = document.getElementById(data.id);
 
-				if (data.progress == 100) {
-					asFinish = true;
-				}
+        if (data.progress == 100) {
+          asFinish = true;
+        }
 
-				if (currentRow) {
-					currentRow.innerHTML = data.progress + "%";
-				}
+        if (currentRow) {
+          currentRow.innerHTML = data.progress + "%";
+        }
 
-			})
-			.catch(error => {
-				console.error("Error fetching current download:", error);
-			});
-	}
-
-	getLinks();
-	setInterval(getLinks, 5000);
-	getCurrentDownload();
-	setInterval(getCurrentDownload, 2000);
+      })
+      .catch(error => {
+        console.error("Error fetching current download:", error);
+      });
+  }
 
 
-	function formatDuration(seconds) {
 
-		seconds = Math.floor(seconds);
+  function formatDuration(seconds) {
 
-		const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-		const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-		const s = (seconds % 60).toString().padStart(2, '0');
-		return `${h}:${m}:${s}`;
-	}
+    seconds = Math.floor(seconds);
+
+    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+
+    let formated = "";
+
+    console.log(h, m, s);
+
+    if (h > 0) {
+      console.log("enter h");
+      formated += h + "h";
+    }
+    if (m > 0) {
+      console.log("enter m");
+      formated += m + "m";
+    }
+
+    formated += s + "s";
 
 
+    console.log("result :", formated);
+
+    return formated;
+  }
+
+
+
+  const switchElement = document.getElementById("switch");
+  const ball = document.querySelector(".ball");
+  let switchStatus = false;
+
+  function getDownloadStatus() {
+    fetch("/getDownloadStatus")
+      .then(response => response.json())
+      .then(data => {
+        switchStatus = data.canDownload;
+        renderSwitch();
+      })
+      .catch(error => {
+        console.error("Error updating status:", error);
+      });
+  }
+
+  function renderSwitch() {
+    if (switchStatus) {
+      switchElement.classList.add("active");
+      ball.classList.add("active");
+    } else {
+      switchElement.classList.remove("active");
+      ball.classList.remove("active");
+    }
+  }
+
+
+
+  switchElement.addEventListener("click", () => {
+    fetch("/setDownloadStatus", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          status: !switchStatus
+        })
+      })
+      .then(response => response.json())
+      .then(data => {})
+      .catch(error => {
+        console.error("Error updating status:", error);
+      });
+
+  })
+
+
+
+  getLinks();
+  setInterval(getLinks, 5000);
+  getCurrentDownload();
+  setInterval(getCurrentDownload, 2000);
+  getDownloadStatus();
+  setInterval(getDownloadStatus, 1000);
 </script>
 
 </html>

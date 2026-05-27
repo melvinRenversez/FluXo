@@ -3,12 +3,16 @@ console.log("Popup chargé");
 (async () => {
 
 	const data = await chrome.storage.local.get(["FluxoLinks"]);
-
 	const resetButton = document.getElementById("resetButton");
-
 	const list = document.getElementById("list");
 
-	const items = data.FluxoLinks || [];
+	const switchElement = document.getElementById("switch");
+	const ball = document.querySelector(".ball");
+
+	let interval = null;
+	let items = data.FluxoLinks || [];
+
+	let switchStatus = false;
 
 	if (items.length === 0) {
 		list.innerHTML = "Aucun flux détecté";
@@ -19,21 +23,22 @@ console.log("Popup chargé");
 
 		list.innerHTML = items.map(item => `
 			<div class="element">
-				<div class="title">eeeee</div>
-				<div class="url" title="${item.url}">${item.url}</div>
-				<div class="duration">${formatDuration(item.duration)}</div>
+				<div class="title">${item.title}</div>
 
-				<form class="bottom">
-					<div class="custom-select">
-						<input name="title" class="title-input" value="${item.title || ''}" placeholder="Titre ">
+				<div class="bottomForm">
+					<div class="duration">${formatDuration(item.duration)}</div>
 
-					</div>
-					
-					<input type="hidden" name="url" value="${item.url}">
-					<input type="hidden" name="duration" value="${item.duration}">
+					<form class="bottom">
+						<input type="hidden" name="title" value="${item.title}">
 
-					<button class="save-btn" type="submit" disabled>Envoyer</button>
-				</form>
+						<input type="hidden" name="url" value="${item.url}">
+						<input type="hidden" name="duration" value="${item.duration}">
+
+						<button class="save-btn" type="submit" ${item.title ? "" : "disabled"}}>Envoyer</button>
+					</form>
+				</div>
+
+				<div class="message" id="message"></div>
 			</div>
 		`).join("");
 
@@ -55,24 +60,36 @@ console.log("Popup chargé");
 		}
 	});
 
-	setInterval(() => {
+	function initInterval() {
 
-		console.log("Vérification des mises à jour...");
+		if (interval) {
+			console.log("Interval deja initialisé");
+			return;
+		};
 
-		const newTry = chrome.storage.local.get(["FluxoLinks"]);
+		console.log("Initialisation de l'intervalle...");
 
-		const newItems = newTry.FluxoLinks || [];
+		interval = setInterval(async () => {
 
-		if (newItems.length > items.length) {
+			console.log("Vérification des mises à jour...");
+
+			const newFluxoLinks = await chrome.storage.local.get(["FluxoLinks"]);
+
+			console.log("newFluxoLinks : ", newFluxoLinks);
+
+			const newItems = newFluxoLinks.FluxoLinks || [];
+
+			if (newItems.length > items.length) {
 
 
-			items = newItems;
+				items = newItems;
 
-			renderLinks();
-		}
+				renderLinks();
+			}
 
 
-	}, 5000);
+		}, 1000);
+	}
 
 
 	document.querySelectorAll(".bottom").forEach(form => {
@@ -99,8 +116,27 @@ console.log("Popup chargé");
 					duration: form.duration.value
 				})
 			})
-				.then(res => res.text())
-				.then(data => console.log(data));
+				.then(res => res.json())
+				.then(data => {
+					const statut = data.statut;
+
+					console.log("returned data:", data);
+
+					const message = form.parentElement.parentElement.querySelector(".message");
+
+					console.log('statut', statut);
+
+					console.log("Message :", message);
+
+					message.classList.add("actif")
+					if (statut == "error") {
+						message.innerHTML = `<span class="error">${data.message}</span>`;
+					}
+					if (statut == "success") {
+						message.innerHTML = `<span class="success">${data.message}</span>`;
+					}
+
+				});
 
 		} catch (error) {
 			alert("Erreur lors de l'envoi des données :", error);
@@ -122,8 +158,12 @@ console.log("Popup chargé");
 	function reset() {
 		chrome.storage.local.remove(["FluxoLinks"], () => {
 			console.log("Données réinitialisées");
-			location.reload();
+			items = [];
+			renderLinks();
+			initInterval();
 		});
 	}
+
+
 
 })();
