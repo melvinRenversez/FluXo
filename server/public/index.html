@@ -18,7 +18,7 @@
 
     cursor: url(./cursor.cur) 0 0, auto;
 
-	height: 100dvh;
+    height: 100dvh;
   }
 
   /* TABLE */
@@ -173,6 +173,18 @@
   .ball.active {
     background-color: limegreen;
   }
+
+
+  input {
+    background: transparent;
+
+    border: none;
+    outline: none;
+
+    width: 100%;
+
+    color: #eee;
+  }
 </style>
 
 
@@ -204,6 +216,7 @@
   let nbRows = 0;
   let asFinish = false;
   let currentDownloadId = null;
+  let isUpdate = false;
 
   function getLinks() {
     fetch("/getLinks")
@@ -211,9 +224,11 @@
       .then(data => {
         console.log(data);
 
-        if (data.length === nbRows && asFinish == false) {
+        if (data.length === nbRows && asFinish == false && !isUpdate) {
           return;
         }
+
+        isUpdate = false;
 
         const list = document.getElementById("list");
 
@@ -229,13 +244,13 @@
           const end = new Date(element.endDownload_at);
 
 
-          const lastRow = (element.status == "Completed") ? `Donloaded on ${formatDuration((end - start)/1000)} ` : "Waitting...";
+          const lastRow = (element.status == "Completed") ? `Donloaded on ${formatDuration((end - start) / 1000)} ` : "Waitting...";
 
 
           let template = `
 						<tr id="row">
 							<td>${element.id}</td>
-							<td class="title">${element.title}</td>
+							<td class="title" id="title-${element.id}">${element.title}</td>
 							<td title="${element.url}">${element.url}</td>
 							<td><span>${formatDuration(element.duration)}</span></td>
 							<td>${element.status}</td>
@@ -248,9 +263,67 @@
 
         list.innerHTML = temp;
 
+        initEvent();
+
       })
       .catch(error => {
         console.error("Error fetching links:", error);
+      });
+  }
+
+  function initEvent() {
+    const allTitles = document.querySelectorAll(".title");
+
+    allTitles.forEach(title => {
+      title.addEventListener("dblclick", () => {
+        console.log("double click on ", title.innerText);
+
+        const template = `
+          <form onsubmit="event.preventDefault(); updateTitle(this);">
+            <input type="hidden" name="id" value="${title.id.split("-")[1]}">
+            <input type="text" value="${title.innerText}">
+
+            </form>
+        `
+        title.innerHTML = template;
+
+        // focus l input
+        const input = title.querySelector('input[type="text"]');
+        input.focus();
+
+        // supprimer l input si on le focus plus 
+        input.addEventListener("blur", () => {
+          title.innerHTML = input.value;
+        });
+
+
+
+      });
+    });
+  }
+
+  function updateTitle(form) {
+    const id = form.querySelector('input[name="id"]').value;
+    const newTitle = form.querySelector('input[type="text"]').value;
+
+    fetch("/updateTitle", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: id,
+        title: newTitle
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Title updated successfully");
+        isUpdate = true;
+        getLinks();
+      })
+      .catch(error => {
+        console.error("Error updating title:", error);
       });
   }
 
@@ -281,8 +354,6 @@
         console.error("Error fetching current download:", error);
       });
   }
-
-
 
   function formatDuration(seconds) {
 
@@ -345,16 +416,16 @@
 
   switchElement.addEventListener("click", () => {
     fetch("/setDownloadStatus", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          status: !switchStatus
-        })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        status: !switchStatus
       })
+    })
       .then(response => response.json())
-      .then(data => {})
+      .then(data => { })
       .catch(error => {
         console.error("Error updating status:", error);
       });

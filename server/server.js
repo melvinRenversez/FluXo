@@ -1,10 +1,12 @@
 import * as db from "./database.js";
 import express from "express";
 import { spawn } from "child_process";
+import fs from "fs";
 
 const app = express();
 const PORT = 3000;
 
+//const downloadDirectory = "./downloads";
 const downloadDirectory = "/mnt/jellyfin/download/autodl";
 const downloadTimeout = 10000;
 
@@ -27,6 +29,43 @@ app.get("/getDownloadStatus", async (req, res) => {
 app.post("/setDownloadStatus", async (req, res) => {
 	canDownload = req.body.status;
 });
+
+app.post("/updateTitle", async (req, res) => {
+	const { id, title } = req.body;
+
+	console.log("ID:", id);
+	console.log("Title:", title);
+
+	let previousTitle =await  db.pool.query("select title from links where id = ?", [id]);
+
+	previousTitle = previousTitle[0][0].title;
+
+	console.log("Previous Title:", previousTitle);
+
+	if (title != "" && title != previousTitle) {
+
+		// modifier le nom ausse dans le dossier de téléchargement
+		const oldPath = `${downloadDirectory}/${previousTitle}.mp4`;
+		const newPath = `${downloadDirectory}/${title}.mp4`;
+
+		try {
+			await fs.promises.rename(oldPath, newPath);
+			console.log(`Fichier renommé de ${oldPath} à ${newPath}`);
+		} catch (err) {
+			console.error("Erreur lors du renommage du fichier:", err);
+			 res.status(500).json({ statut: "error", message: "Erreur lors du renommage du fichier" });
+			 return;
+		}
+
+		await db.pool.query("update links set title = ? where id = ?", [title, id]);
+
+		res.json({ statut: "success", message: "Titre mis à jour avec succès" });
+
+	}
+
+	res.json({ statut: "error", message: "Erreur lors de la mise à jour du titre" });
+
+})
 
 app.get("/getLinks", async (req, res) => {
 
@@ -93,7 +132,7 @@ async function download() {
 	}
 	downloadInProgress = true;
 
-	const links = await db.pool.query("select id, title, url from links where status_id = 1 or status_id = 2");
+	const links = await db.pool.query("select id, title, url from links where status_id = 1 or status_id = 2 or status_id = 4 order by created_at asc");
 
 
 	if (links[0].length == 0) {
@@ -111,7 +150,7 @@ async function download() {
 
 
 	const ytdlp = spawn("yt-dlp", [
-		"-N", "32",
+		"-N", "1",
 		"-o", `${downloadDirectory}/${currentDownload.title}.mp4`,
 		currentDownload.url
 	]);
