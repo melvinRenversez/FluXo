@@ -185,6 +185,7 @@
 
     color: #eee;
   }
+
 </style>
 
 
@@ -307,15 +308,15 @@
     const newTitle = form.querySelector('input[type="text"]').value;
 
     fetch("/updateTitle", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        id: id,
-        title: newTitle
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: id,
+          title: newTitle
+        })
       })
-    })
       .then(response => response.json())
       .then(data => {
         console.log("Title updated successfully");
@@ -416,16 +417,16 @@
 
   switchElement.addEventListener("click", () => {
     fetch("/setDownloadStatus", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        status: !switchStatus
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          status: !switchStatus
+        })
       })
-    })
       .then(response => response.json())
-      .then(data => { })
+      .then(data => {})
       .catch(error => {
         console.error("Error updating status:", error);
       });

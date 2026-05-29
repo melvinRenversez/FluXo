@@ -46,3 +46,18 @@ select * from links;
 
 
 select id, title, url from links where status_id = 1 or status_id = 2;
+
+
+
+drop table if exists search;
+create table search(
+	id int auto_increment primary key,
+	title varchar(255) not null,
+	image varchar(255) not null,
+	page integer not null,
+	idx integer not null,
+    
+	created_at timestamp default current_timestamp
+);
+
+select * from search order by id desc;

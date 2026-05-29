@@ -39,12 +39,18 @@
 
     background: #151515;
 
+    position: relative;
+
+    aspect-ratio: 16/9;
+
   }
 
   .title {
     font-weight: bold;
 
     color: #eee;
+
+    z-index: 10;
   }
 
   .url {
@@ -141,14 +147,31 @@
     width: 100%;
 
     margin-top: 10px;
+
+    z-index: 10;
   }
 
+
+  video {
+    width: 100%;
+
+    aspect-ratio: 16/9;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+.gap {
+  flex-grow: 1;
+}
 
 </style>
 
 <body>
 
-  
+
 
   <div class="list" id="list">
 

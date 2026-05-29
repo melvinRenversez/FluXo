@@ -36,7 +36,7 @@ app.post("/updateTitle", async (req, res) => {
 	console.log("ID:", id);
 	console.log("Title:", title);
 
-	let previousTitle =await  db.pool.query("select title from links where id = ?", [id]);
+	let previousTitle = await db.pool.query("select title from links where id = ?", [id]);
 
 	previousTitle = previousTitle[0][0].title;
 
@@ -53,8 +53,8 @@ app.post("/updateTitle", async (req, res) => {
 			console.log(`Fichier renommé de ${oldPath} à ${newPath}`);
 		} catch (err) {
 			console.error("Erreur lors du renommage du fichier:", err);
-			 res.status(500).json({ statut: "error", message: "Erreur lors du renommage du fichier" });
-			 return;
+			res.status(500).json({ statut: "error", message: "Erreur lors du renommage du fichier" });
+			return;
 		}
 
 		await db.pool.query("update links set title = ? where id = ?", [title, id]);
@@ -150,7 +150,7 @@ async function download() {
 
 
 	const ytdlp = spawn("yt-dlp", [
-		"-N", "1",
+		"-N", "32",
 		"-o", `${downloadDirectory}/${currentDownload.title}.mp4`,
 		currentDownload.url
 	]);

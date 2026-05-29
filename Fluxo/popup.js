@@ -21,9 +21,20 @@ console.log("Popup chargé");
 
 	function renderLinks() {
 
-		list.innerHTML = items.map(item => `
+
+		// recupere que les lient qui on un title different de undefined
+		itemsFilter = items.filter(item => item.title !== undefined);
+
+		list.innerHTML = itemsFilter.map(item => `
 			<div class="element">
 				<div class="title">${item.title}</div>
+					
+				<video controls autoplay muted>
+					<source src="${item.url}" type="video/mp4">
+				</video>
+
+				<div class="gap"></div>
+					
 
 				<div class="bottomForm">
 					<div class="duration">${formatDuration(item.duration)}</div>
