@@ -4,214 +4,514 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
 </head>
+
 <style>
-  body {
-    font-family: Arial, sans-serif;
-
-    background: #202020;
-    color: #eee;
-
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
     margin: 0;
-    padding: 20px;
+    padding: 0;
+  }
 
+  :root {
+    --bg: #080c10;
+    --surface: #0d1117;
+    --surface2: #111820;
+    --border: rgba(0, 200, 255, 0.12);
+    --border-bright: rgba(0, 200, 255, 0.4);
+    --accent: #00c8ff;
+    --accent-dim: rgba(0, 200, 255, 0.15);
+    --accent-glow: rgba(0, 200, 255, 0.06);
+    --text: #cdd6e0;
+    --text-dim: #4a6070;
+    --text-bright: #e8f4ff;
+  }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
     cursor: url(./cursor.cur) 0 0, auto;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 100dvh;
-  }
-
-  /* TABLE */
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    background: #151515;
-
-    border-radius: 12px;
+    max-height: 100dvh;
     overflow: hidden;
 
-
-  table-layout: fixed;
+    /* subtle grid background */
+    background-image:
+      linear-gradient(rgba(0, 200, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 200, 255, 0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
-  /* HEADER */
-
-  thead {
-    background: #2a2a2a;
+  /* scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.07) 2px,
+        rgba(0, 0, 0, 0.07) 4px);
+    pointer-events: none;
+    z-index: 100;
   }
-
-  thead th {
-    padding: 15px;
-
-    text-align: left;
-
-    color: #eee;
-
-    font-size: 14px;
-    font-weight: bold;
-
-    border-bottom: 1px solid #303030;
-  }
-
-  /* ROWS */
-
-  tbody tr {
-    border-bottom: 1px solid #252525;
-
-    transition: background 0.2s ease;
-  }
-
-  tbody tr:hover {
-    background: #1f1f1f;
-  }
-
-  tbody td {
-    padding: 15px;
-
-    color: #ddd;
-
-    font-size: 14px;
-
-    max-width: 250px;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* URL */
-
-  tbody td:nth-child(2) {
-    color: #aaa;
-  }
-
-  /* DURATION */
-
-  tbody td:nth-child(3) {
-    width: 100px;
-  }
-
-  tbody td:nth-child(3) span {
-    background: #303030;
-
-    padding: 6px 12px;
-
-    border-radius: 20px;
-
-    display: inline-block;
-
-    font-size: 13px;
-  }
-
-  /* STATUS */
-
-  tbody td:nth-child(4) {
-    font-weight: bold;
-  }
-
-  .title {
-    font-weight: bold;
-  }
-
-  /* SCROLL */
 
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 4px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #151515;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #3a3a3a;
-    border-radius: 10px;
+    background: var(--border-bright);
+    border-radius: 2px;
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #4a4a4a;
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 98dvh;
+    width: min(560px, 96vw);
+    padding: 40px 0 20px;
+    min-height: 0;
+    /* important pour que flex enfant puisse scroller */
   }
 
-  img {
-    width: 50px;
-  }
-
-
-
-  input {
-    background: transparent;
-
-    border: none;
-    outline: none;
-
+  /* ── HEADER ── */
+  .header {
     width: 100%;
-
-    color: #eee;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeSlideDown 0.5s ease forwards;
   }
 
-  td.trId {
-    width: 40px;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  td.trImage {
-    width: 60px;
-    text-align: center;
-    padding: 5px;
-  }
-
-  .trTitle {
+  .header-line {
     flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-bright));
+  }
+
+  .header-line.right {
+    background: linear-gradient(90deg, var(--border-bright), transparent);
+  }
+
+  .header-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  /* ── SEARCH BOX ── */
+  .search {
+    width: 100%;
+    position: relative;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeSlideDown 0.5s ease 0.1s forwards;
+  }
+
+  .search-inner {
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0 20px;
+    gap: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-inner:focus-within {
+    border-color: var(--border-bright);
+    box-shadow: 0 0 0 1px var(--border-bright), 0 0 24px var(--accent-glow);
+  }
+
+  .search-icon {
+    color: var(--text-dim);
+    flex-shrink: 0;
+    transition: color 0.2s;
+  }
+
+  .search-inner:focus-within .search-icon {
+    color: var(--accent);
+  }
+
+  .search input {
+    background: transparent;
+    border: none;
+    color: var(--text-bright);
+    width: 100%;
+    font-size: 17px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    outline: none;
+    padding: 18px 0;
+  }
+
+  .search input::placeholder {
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .search-corner {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: var(--accent);
+    border-style: solid;
+    opacity: 0.6;
+  }
+
+  .search-corner.tl {
+    top: -1px;
+    left: -1px;
+    border-width: 1px 0 0 1px;
+  }
+
+  .search-corner.tr {
+    top: -1px;
+    right: -1px;
+    border-width: 1px 1px 0 0;
+  }
+
+  .search-corner.bl {
+    bottom: -1px;
+    left: -1px;
+    border-width: 0 0 1px 1px;
+  }
+
+  .search-corner.br {
+    bottom: -1px;
+    right: -1px;
+    border-width: 0 1px 1px 0;
+  }
+
+  /* ── RESULTS META ── */
+  .results-meta {
+    width: 100%;
+    margin-bottom: 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    min-height: 14px;
+  }
+
+  .results-meta span {
+    color: var(--accent);
+  }
+
+  /* ── LIST ── */
+  .list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    padding-right: 4px;
+    padding-bottom: 8px;
+  }
+
+  a.element {
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    gap: 0;
+    text-decoration: none;
+    color: var(--text);
+    overflow: hidden;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s, height 0.2s ease-in-out;
+    animation: fadeSlideUp 0.3s ease both;
+    min-height: 60px;
+    height: 60px;
+  }
+
+  a.element:hover {
+    border-color: var(--border-bright);
+    background: var(--surface2);
+    color: var(--text-bright);
+
+    height: 200px !important;
+  }
+
+  a.element:hover .image,
+  a.element:hover .image img {
+    height: 100%;
+    width: auto !important;
+  }
+
+  a.element::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  a.element:hover::before {
+    opacity: 1;
+  }
+
+  .element .image {
+    width: 80px;
+    height: 68px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .element .image img {
+    width: 80px;
+    height: 68px;
+    object-fit: cover;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+
+  a.element:hover .image img {
+    opacity: 1;
+  }
+
+  .element .info {
+    flex: 1;
+    padding: 0 16px;
+    min-width: 0;
+  }
+
+  .element .title {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+
+  .element .type {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.7;
+  }
+
+  .element .btn {
+    width: 56px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    transition: color 0.2s;
+  }
+
+  a.element:hover .btn {
+    color: var(--accent);
+  }
+
+  .btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* empty state */
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 60px 0;
+    color: var(--text-dim);
+    width: 100%;
+  }
+
+  .empty-icon {
+    width: 36px;
+    height: 36px;
+    opacity: 0.3;
+  }
+
+  .empty-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeSlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
 
 <body>
-  <table>
-    <thead>
-      <tr>
-        <th>id</th>
-        <th>Image</th>
-        <th>Title</th>
-      </tr>
-    </thead>
-    <tbody id="list">
-    </tbody>
-  </table>
+  <div class="container">
+
+    <div class="header">
+      <div class="header-line"></div>
+      <div class="header-label">SEARCH</div>
+      <div class="header-line right"></div>
+    </div>
+
+    <div class="search">
+      <div class="search-corner tl"></div>
+      <div class="search-corner tr"></div>
+      <div class="search-corner bl"></div>
+      <div class="search-corner br"></div>
+      <div class="search-inner">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input id="input" type="text" placeholder="Search titles...">
+      </div>
+    </div>
+
+    <div class="results-meta" id="meta"></div>
+    <div class="list" id="list"></div>
+
+  </div>
 </body>
 
 <script>
-  function getFilms() {
-    fetch("/getFilms")
+  const input = document.getElementById("input");
+  const list = document.getElementById("list");
+  const meta = document.getElementById("meta");
+
+  input.addEventListener("input", () => {
+    search();
+  });
+
+  function search() {
+    fetch("/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ search: input.value.trim() })
+    })
       .then(response => response.json())
       .then(data => {
+        const films = data.titles;
 
-        console.log(data);
+        if (!films || films.length === 0) {
+          meta.innerHTML = `<span>0</span> résultat`;
+          list.innerHTML = `
+            <div class="empty">
+              <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <div class="empty-text">No results found</div>
+            </div>`;
+          return;
+        }
 
-        data.forEach(film => {
-
-          const template = `
-          <tr>
-            <td class="trId">${film.id}</td>
-            <td class="trImage"><img src="${film.image}" alt="${film.title}"></td>
-            <td class="trTitle">${film.title}</td>
-            </tr>
-            `
-
-          document.getElementById("list").innerHTML += template;
-
+        let temp = "";
+        films.forEach((film, i) => {
+          console.log(film.type);
+          temp += getTemplate(film.id, film.image, film.title, film.type, film.date, i);
         });
+        list.innerHTML = temp;
 
+        getTotal();
       })
       .catch(error => {
-        console.error("Error fetching films:", error);
+        console.error("Error:", error);
       });
   }
 
-  getFilms();
+  function getTotal() {
+    fetch("/getTotal")
+      .then(response => response.json())
+      .then(data => {
+        meta.innerHTML = `<span>${data.total}</span> résultat`;
+      })
+      .catch(error => {
+        console.error("Error:", error);
+      });
+  }
+
+  setInterval(() => {
+    getTotal();
+  }, 10000);
+
+  function getTemplate(id, image, title, type, date, index) {
+    return `
+      <a class="element" href="/film?id=${id}" style="animation-delay:${index * 40}ms">
+        <div class="image">
+          <img src="${image}" alt="${title}">
+        </div>
+        <div class="info">
+          <div class="title">${title} - ${date}</div>
+          <div class="type">${type}</div>
+        </div>
+        <div class="btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </div>
+      </a>`;
+  }
+
+  search();
 </script>
 
 </html>

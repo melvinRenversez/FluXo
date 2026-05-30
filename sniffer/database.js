@@ -1,8 +1,8 @@
 import mysql from "mysql2/promise";
 
 export const pool = mysql.createPool({
-	host: '192.168.0.225',
-	port: 3306,      // ou IP du serveur MySQL
+	host: '88.189.251.90',
+	port: 21336,      // ou IP du serveur MySQL
 	user: 'fluxo_user',
 	password: 'FluxoMDP123!',
 	database: 'fluxo'

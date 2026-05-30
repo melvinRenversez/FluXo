@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Film</title>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+		rel="stylesheet">
+
+	<style>
+		*,
+		*::before,
+		*::after {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		:root {
+			--bg: #080c10;
+			--surface: #0d1117;
+			--border: rgba(0, 200, 255, 0.12);
+			--border-bright: rgba(0, 200, 255, 0.4);
+			--accent: #00c8ff;
+			--text: #cdd6e0;
+			--text-dim: #4a6070;
+			--text-bright: #e8f4ff;
+		}
+
+		body {
+			font-family: 'Rajdhani', sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			height: 100dvh;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			cursor: url(./cursor.cur) 0 0, auto;
+
+			background-image:
+				linear-gradient(rgba(0, 200, 255, 0.02) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(0, 200, 255, 0.02) 1px, transparent 1px);
+			background-size: 42px 42px;
+		}
+
+		body::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background: repeating-linear-gradient(0deg,
+					transparent,
+					transparent 3px,
+					rgba(0, 0, 0, 0.08) 3px,
+					rgba(0, 0, 0, 0.08) 5px);
+			pointer-events: none;
+			z-index: 100;
+		}
+
+		/* NAV */
+		.nav {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: 50;
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			padding: 16px 28px;
+			background: linear-gradient(to bottom, rgba(8, 12, 16, 0.92), transparent);
+		}
+
+		.back-btn {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			text-decoration: none;
+			color: var(--text-dim);
+			font-family: 'Share Tech Mono', monospace;
+			font-size: 11px;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+			transition: 0.2s;
+		}
+
+		.back-btn:hover {
+			color: var(--accent);
+		}
+
+		.nav-line {
+			flex: 1;
+			height: 1px;
+			background: linear-gradient(90deg, var(--border-bright), transparent);
+		}
+
+		.nav-id {
+			font-family: 'Share Tech Mono';
+			font-size: 10px;
+			color: var(--text-dim);
+			letter-spacing: 0.2em;
+		}
+
+		/* VIDEO */
+		.video-wrap {
+			flex: 1;
+			position: relative;
+			background: black;
+			min-height: 40vh;
+		}
+
+		iframe {
+			width: 100%;
+			height: 100%;
+			border: none;
+		}
+
+		.video-wrap::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 90px;
+			background: linear-gradient(to bottom, transparent, var(--bg));
+			pointer-events: none;
+		}
+
+		/* PANEL */
+		.panel {
+			height: 240px;
+			display: flex;
+			background: var(--surface);
+			border-top: 1px solid var(--border);
+			animation: fadeSlideUp 0.4s ease forwards;
+		}
+
+		/* POSTER */
+		.poster {
+			width: 160px;
+			flex-shrink: 0;
+			position: relative;
+			overflow: hidden;
+			border-right: 1px solid var(--border);
+		}
+
+		.poster img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.poster::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(135deg, rgba(0, 200, 255, 0.08), transparent 60%);
+		}
+
+		.poster-corner {
+			position: absolute;
+			width: 10px;
+			height: 10px;
+			border: 2px solid var(--accent);
+			opacity: 0.8;
+		}
+
+		.poster-corner.tl {
+			top: 0;
+			left: 0;
+			border-right: none;
+			border-bottom: none;
+		}
+
+		.poster-corner.tr {
+			top: 0;
+			right: 0;
+			border-left: none;
+			border-bottom: none;
+		}
+
+		.poster-corner.bl {
+			bottom: 0;
+			left: 0;
+			border-right: none;
+			border-top: none;
+		}
+
+		.poster-corner.br {
+			bottom: 0;
+			right: 0;
+			border-left: none;
+			border-top: none;
+		}
+
+		/* META */
+		.meta {
+			flex: 1;
+			padding: 22px 26px;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+			min-width: 0;
+		}
+
+		.badges {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		.badge {
+			font-family: 'Share Tech Mono';
+			font-size: 10px;
+			padding: 4px 10px;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+		}
+
+		.badge-type {
+			background: rgba(0, 200, 255, 0.12);
+			border: 1px solid var(--border-bright);
+			color: var(--accent);
+		}
+
+		.badge-date {
+			border: 1px solid var(--border);
+			color: var(--text-dim);
+		}
+
+		.title {
+			font-size: 26px;
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			color: var(--text-bright);
+			text-transform: uppercase;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.divider {
+			height: 1px;
+			background: linear-gradient(90deg, var(--border-bright), transparent);
+		}
+
+		.description {
+			font-size: 14px;
+			line-height: 1.6;
+			color: var(--text);
+			display: -webkit-box;
+			-webkit-line-clamp: 4;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
+		.download-btn {
+			margin-top: 10px;
+			align-self: flex-start;
+			font-family: 'Share Tech Mono', monospace;
+			font-size: 11px;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+
+			padding: 8px 14px;
+			border: 1px solid var(--border-bright);
+			background: rgba(0, 200, 255, 0.08);
+			color: var(--accent);
+			text-decoration: none;
+			transition: 0.2s;
+		}
+
+		.download-btn:hover {
+			background: rgba(0, 200, 255, 0.18);
+			transform: translateY(-1px);
+		}
+
+		@keyframes fadeSlideUp {
+			from {
+				opacity: 0;
+				transform: translateY(10px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		/* =========================
+		   📱 RESPONSIVE
+		========================= */
+
+		@media (max-width: 900px) {
+			.title {
+				font-size: 20px;
+			}
+
+			.panel {
+				height: auto;
+			}
+		}
+
+		@media (max-width: 700px) {
+			body {
+				overflow-y: auto;
+			}
+
+			.panel {
+				flex-direction: column;
+				height: auto;
+			}
+
+			.poster {
+				width: 100%;
+				height: 220px;
+				border-right: none;
+				border-bottom: 1px solid var(--border);
+			}
+
+			.meta {
+				padding: 16px;
+			}
+
+			.title {
+				font-size: 18px;
+				white-space: normal;
+			}
+
+			.description {
+				-webkit-line-clamp: 6;
+			}
+
+			.video-wrap {
+				min-height: 35vh;
+			}
+		}
+
+		@media (max-width: 420px) {
+			.nav {
+				padding: 12px 14px;
+			}
+
+			.back-btn {
+				font-size: 10px;
+			}
+
+			.title {
+				font-size: 16px;
+			}
+
+			.download-btn {
+				width: 100%;
+				text-align: center;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<nav class="nav">
+		<a class="back-btn" href="/">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="19" y1="12" x2="5" y2="12" />
+				<polyline points="12 19 5 12 12 5" />
+			</svg>
+			Retour
+		</a>
+
+		<div class="nav-line"></div>
+		<div class="nav-id" id="nav-id">— —</div>
+	</nav>
+
+	<div class="video-wrap">
+		<iframe id="video" allow="autoplay"></iframe>
+	</div>
+
+	<div class="panel">
+		<div class="poster">
+			<div class="poster-corner tl"></div>
+			<div class="poster-corner tr"></div>
+			<div class="poster-corner bl"></div>
+			<div class="poster-corner br"></div>
+			<img id="img">
+		</div>
+
+		<div class="meta">
+			<div class="badges">
+				<div class="badge badge-type" id="type"></div>
+				<div class="badge badge-date" id="date"></div>
+			</div>
+
+			<div class="title" id="title"></div>
+
+			<div class="divider"></div>
+
+			<div class="description" id="description"></div>
+
+			<a id="downloadBtn" class="download-btn" href="#" download>
+				⬇ DOWNLOAD
+			</a>
+		</div>
+	</div>
+
+	<script>
+		const id = new URLSearchParams(window.location.search).get("id");
+
+		const video = document.getElementById("video");
+		const img = document.getElementById("img");
+		const title = document.getElementById("title");
+		const date = document.getElementById("date");
+		const type = document.getElementById("type");
+		const description = document.getElementById("description");
+		const navId = document.getElementById("nav-id");
+		const downloadBtn = document.getElementById("downloadBtn");
+
+		fetch("/getFilm/" + id)
+			.then(r => r.json())
+			.then(data => {
+				const film = data.film;
+
+				video.src = film.video;
+				img.src = film.image;
+
+				title.textContent = film.title;
+				date.textContent = film.date;
+				type.textContent = film.type;
+				description.textContent = film.description;
+
+				navId.textContent = "ID — " + id;
+
+				downloadBtn.href = film.video;
+				downloadBtn.setAttribute("download", film.title || "video");
+
+				document.title = film.title;
+			})
+			.catch(console.error);
+	</script>
+
+</body>
+
+</html>

@@ -54,10 +54,15 @@ create table search(
 	id int auto_increment primary key,
 	title varchar(255) not null,
 	image varchar(255) not null,
+	type varchar(255) not null,
+	video varchar(255) not null,
+	date integer not null,
+	description longtext not null,
 	page integer not null,
 	idx integer not null,
     
 	created_at timestamp default current_timestamp
 );
 
-select * from search order by id desc;
+select * from search order by title;
+select * from search where title like "%perf%";
