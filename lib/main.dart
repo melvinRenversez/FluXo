@@ -1,8 +1,15 @@
+import 'package:FluXo/screens/SplashScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:FluXo/screens/movie.dart';
 import 'screens/search.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   runApp(const MyApp());
 }
 
@@ -13,11 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SearchScreen(),
-      // home: const MovieScreen(
-      //   movieId: 4242,
-      //   movieUrl: "https://sharecloudy.com/iframe/2jPOr5kfXm",
-      // ),
+      home: SplashScreen(child: const SearchScreen()),
     );
   }
 }

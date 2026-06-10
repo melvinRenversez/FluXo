@@ -26,7 +26,6 @@ class Movie {
   final String type;
   final String title;
   final int date;
-  int asked;
   final String description;
 
   Movie({
@@ -36,7 +35,6 @@ class Movie {
     required this.date,
     required this.video,
     required this.description,
-    required this.asked,
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
@@ -47,7 +45,6 @@ class Movie {
       date: json['date'],
       video: json['video'],
       description: json['description'],
-      asked: json['asked'],
     );
   }
 }
@@ -66,14 +63,6 @@ class ApiService {
     // print(const JsonEncoder.withIndent('  ').convert(movieJson));
 
     return Movie.fromJson(movieJson);
-  }
-
-  static Future<int> askMovie(int id) async {
-    final res = await http.get(Uri.parse('$_baseUrl/ask/$id'));
-
-    if (res.statusCode != 200) throw Exception('AskMovie failed');
-
-    return res.statusCode;
   }
 }
 
@@ -113,21 +102,6 @@ class _MovieScreenState extends State<MovieScreen> {
     } catch (_) {}
   }
 
-  void _askMovie(int movieId) async {
-    print('Ask id ${movieId}');
-
-    try {
-      final result = await ApiService.askMovie(movieId);
-
-      if (result == 200) {
-        if (mounted) setState(() => _movie!.asked = 1);
-      } else {
-        print('Error: ${result}');
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
 
   // BUILD -----------------------------
   @override
@@ -152,18 +126,7 @@ class _MovieScreenState extends State<MovieScreen> {
                   ],
                 ),
         ),
-      ),
-
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: _AskButton(
-            movieId: widget.movieId,
-            asked: _movie?.asked ?? 0,
-            askMovie: _askMovie,
-          ),
-        ),
-      ),
+      ),  
     );
   }
 }
@@ -391,68 +354,68 @@ class _Description extends StatelessWidget {
   }
 }
 
-class _AskButton extends StatelessWidget {
-  final int movieId;
-  final int asked;
-  final void Function(int) askMovie;
+// class _AskButton extends StatelessWidget {
+//   final int movieId;
+//   final int asked;
+//   final void Function(int) askMovie;
 
-  const _AskButton({
-    required this.movieId,
-    required this.asked,
-    required this.askMovie,
-  });
+//   const _AskButton({
+//     required this.movieId,
+//     required this.asked,
+//     required this.askMovie,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return asked == 1
-        ? Stack(
-            children: [
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: AppColors.borderBright),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Already Asked",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.accent,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'monospace',
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )
-        : GestureDetector(
-            onTap: () {
-              askMovie(movieId);
-            },
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(width: 1, color: AppColors.borderBright),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Ask",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.accent,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'monospace',
-                  ),
-                ),
-              ),
-            ),
-          );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return asked == 1
+//         ? Stack(
+//             children: [
+//               Container(
+//                 width: double.infinity,
+//                 decoration: BoxDecoration(
+//                   border: Border.all(width: 1, color: AppColors.borderBright),
+//                   borderRadius: BorderRadius.circular(2),
+//                 ),
+//                 child: Padding(
+//                   padding: const EdgeInsets.all(8.0),
+//                   child: Text(
+//                     "Already Asked",
+//                     textAlign: TextAlign.center,
+//                     style: TextStyle(
+//                       color: AppColors.accent,
+//                       fontSize: 12,
+//                       fontWeight: FontWeight.w500,
+//                       fontFamily: 'monospace',
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           )
+//         : GestureDetector(
+//             onTap: () {
+//               askMovie(movieId);
+//             },
+//             child: Container(
+//               width: double.infinity,
+//               decoration: BoxDecoration(
+//                 border: Border.all(width: 1, color: AppColors.borderBright),
+//                 borderRadius: BorderRadius.circular(2),
+//               ),
+//               child: Padding(
+//                 padding: const EdgeInsets.all(8.0),
+//                 child: Text(
+//                   "Ask",
+//                   textAlign: TextAlign.center,
+//                   style: TextStyle(
+//                     color: AppColors.accent,
+//                     fontSize: 12,
+//                     fontWeight: FontWeight.w500,
+//                     fontFamily: 'monospace',
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           );
+//   }
+// }
