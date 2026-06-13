@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import 'package:flutter/foundation.dart';
+
 class AppColors {
   static const bg = Color(0xFF08070C);
   static const surface = Color(0xFF0D0B17);
@@ -112,6 +114,8 @@ class _SearchState extends State<SearchScreen> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
 
+  List<FilmItem> lastResult = [];
+
   List<FilmItem> _films = [];
   Map<String, dynamic> _Meta = {'total': 0, 'diff': 0};
   Map<String, dynamic> _Types = {"id": 0, "libelle": ""};
@@ -137,6 +141,13 @@ class _SearchState extends State<SearchScreen> {
   Future<void> _fetchSearch(String query) async {
     try {
       final results = await ApiService.search(query, _activeFilters);
+
+      final oldIds = lastResult.map((e) => e.id).toList();
+      final newIds = results.map((e) => e.id).toList();
+
+      if (listEquals(oldIds, newIds)) return;
+      lastResult = results;
+
       if (mounted) {
         setState(() {
           _films = results;
