@@ -1,5 +1,8 @@
 import 'package:FluXo/screens/SplashScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:FluXo/screens/movie.dart';
 import 'screens/search.dart';
 
 void main() async {
