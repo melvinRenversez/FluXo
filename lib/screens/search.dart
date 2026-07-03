@@ -29,9 +29,10 @@ class MovieItem {
   final String title;
   final String image;
   final String url;
-  final String type; // IMPORTANT: string pour matcher API
+  final String type;
   final int date;
   final DateTime createdAt;
+  final bool isNew;
 
   MovieItem({
     required this.id,
@@ -41,11 +42,10 @@ class MovieItem {
     required this.type,
     required this.date,
     required this.createdAt,
+    required this.isNew,
   });
 
-  bool get isNew {
-    return DateTime.now().difference(createdAt).inDays < 1;
-  }
+  
 
   factory MovieItem.fromJson(Map<String, dynamic> json) {
     return MovieItem(
@@ -56,6 +56,7 @@ class MovieItem {
       type: json['type'].toString(),
       date: json['date'],
       createdAt: DateTime.parse(json['created_at']),
+      isNew: json['isNew'] == 1,
     );
   }
 }
